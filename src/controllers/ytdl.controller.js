@@ -232,7 +232,7 @@ const downloadTrimmedVideo = async (req, res, next) => {
         }
     }
 }
-router.post('/downloadTrimmedFile', downloadTrimmedVideo);
+router.post('/downloadTrimmedFile', cors(corsOptions), downloadTrimmedVideo);
 
 const TrimmingVideo = async (req, res, next) => {
     
@@ -299,7 +299,7 @@ const TrimmingVideo = async (req, res, next) => {
         }
     }
 }
-router.post('/downloadTrimmedFile2', TrimmingVideo);
+router.post('/downloadTrimmedFile2', cors(corsOptions), TrimmingVideo);
 
 
 const downloadMergedTrimmedVideo = async (req, res, next) => {
