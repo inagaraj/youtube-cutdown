@@ -5,7 +5,14 @@ const fileMiddleware = require('express-multipart-file-parser');
 const app = express();
 app.use(express.json({limit: '200mb'}));
 
-app.use(cors());
+// app.use(cors());
+app.use(cors({
+    origin: "*",
+    "methods": "GET,PUT,POST",
+    "preflightContinue": false,
+    "optionsSuccessStatus": 204,
+    credentials: true
+}));
 app.use(fileMiddleware);
 
 require('dotenv').config({ path: __dirname + '/.env' });
