@@ -171,9 +171,9 @@ const download = async (req, res) => {
 router.get('/download', download);
 
 const downloadTrimmedVideo = async (req, res, next) => {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, x-client-key, x-client-token, x-client-secret, Authorization");
+    // res.header("Access-Control-Allow-Origin", "*");
+    // res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
+    // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, x-client-key, x-client-token, x-client-secret, Authorization");
     try {
         // console.log(JSON.stringify(req.body));
         let { filename, format, startTime, endTime } = req.body;
@@ -235,10 +235,11 @@ const downloadTrimmedVideo = async (req, res, next) => {
 router.post('/downloadTrimmedFile', downloadTrimmedVideo);
 
 const TrimmingVideo = async (req, res, next) => {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, x-client-key, x-client-token, x-client-secret, Authorization");
+    
     try {
+        // res.header("Access-Control-Allow-Origin", "*");
+        // res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
+        // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, x-client-key, x-client-token, x-client-secret, Authorization");
         // console.log(JSON.stringify(req.body));
         let {directory, downloaded_link, format, startTime, endTime } = req.body;
         // filename = filename.split(' ').join('_');
