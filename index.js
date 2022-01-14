@@ -10,6 +10,7 @@ const allowedOrigins = [
   'http://localhost',
   'http://localhost:8080',
   'http://localhost:8100',
+  'https://youtube-cutdown.herokuapp.com/',
 ];
 
 // Reflect the origin if it's in the allowed list or not defined (cURL, Postman, etc.)
