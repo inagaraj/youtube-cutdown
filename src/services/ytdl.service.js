@@ -119,24 +119,27 @@ const trimYTFormatVideo = async (filename, format, startTime, endTime) => {
             directory: downloadDirectory,
             fileName: fileNameToStoreDownloaded,
             onProgress: function (percentage, chunk, remainingSize) {
-                // console.log('% ', percentage);
+                console.log('% ', percentage);
                 // console.log('Remaining bytes: ', remainingSize)
                 if (remainingSize > downloadThreshold) {
                     downloader.cancel();
                     isDownloadCancelled = true;
                 }
+                
+                
             }
         })
+        
 
-
-        console.log("Download started");
+        console.log("T:Download started");
         await downloader.download();
-        console.log("Download finished");
-        console.log("Download directory is " + downloadDirectory);
+        console.log("T:Download finished");
+        console.log("T:Download directory is " + downloadDirectory);
 
         if (!isDownloadCancelled) {
             let filePath = downloadDirectory + fileNameToStoreDownloaded;
             let trimmedFilePath = path.join(downloadDirectory + fileNameToStoreTrimmed);
+            console.log(trimmedFilePath);
             let file;
             let videoProcess = await new ffmpeg(filePath).then(
                 async (video) => {
@@ -151,7 +154,7 @@ const trimYTFormatVideo = async (filename, format, startTime, endTime) => {
             let pathArray = trimmedFilePath.split(path.sep);
             pathArray = pathArray.slice(pathArray.indexOf('downloads') + 1, pathArray.length);
             let downloadLink = pathArray.join('/');
-
+            console.log(downloadLink);
             return {
                 apiStatus: "SUCCESS",
                 data: {
@@ -166,7 +169,7 @@ const trimYTFormatVideo = async (filename, format, startTime, endTime) => {
                     message: "File size larger than threshold limit"
                 }
             }
-        }
+        } 
     } catch (error) {
         throw error
     }
@@ -187,7 +190,6 @@ const removeDownloadDirectory = async () => {
 }
 
 const downloadFile = async (url, filename, destination) => {
-    console.log("backend-serv"+filename);
     let isDownloadCancelled = false;
     const downloader = new Downloader({
         url: url,
@@ -213,7 +215,48 @@ const downloadFile = async (url, filename, destination) => {
         return null;
     }
 }
+const TrimvideodownloadFile = async (url, filename) => {
+    const downloadDirectory = await getDownloadDirectory();
+    let isDownloadCancelled = false;
+    const downloader = new Downloader({
+        url: url,
+        directory: downloadDirectory,
+        fileName: filename,
+        onProgress: function (percentage, chunk, remainingSize) {
+            console.log('% ', percentage);
+            // console.log('Remaining bytes: ', remainingSize)
+            if (remainingSize > downloadThreshold) {
+                downloader.cancel();
+                isDownloadCancelled = true;
+            }
+        }
+    })
 
+    console.log("Download started");
+    await downloader.download();
+    console.log("Download finished");
+
+    if (!isDownloadCancelled) {
+        return {
+            apiStatus: "SUCCESS",
+            data: {
+                filename,
+                directory: downloadDirectory,
+                downloadLink: downloadDirectory+"/"+filename
+            }
+        }
+    } else {
+        return {
+            apiStatus: "CANCELLED",
+            data: {
+                filename,
+                directory: downloadDirectory,
+                downloadLink: downloadDirectory+"/"+filename
+            }
+        }
+        
+    }
+}
 const trimVideo = async (videoPath, destination, startTime, endTime) => {
     try {
         let videoProcess = await new ffmpeg(videoPath).then(
@@ -232,13 +275,51 @@ const trimVideo = async (videoPath, destination, startTime, endTime) => {
     }
 }
 
+
+const trimmingVideo = async (videoPath, destination, startTime, endTime) => {
+    let trimmedFilePath = path.join(videoPath);
+    console.log("trimm");
+    // console.log(videoPath);
+    console.log(destination);
+    try {
+        let videoProcess = await new ffmpeg(videoPath).then(
+            async (video) => {
+                video.setVideoStartTime(startTime);
+                video.setVideoDuration(endTime - startTime);
+                console.log("Trimming started");
+                file = await video.save(destination);
+                console.log("Trimming finished");
+            }
+        )
+        // return true;
+        return {
+            apiStatus: "SUCCESS",
+            data: {
+                downloadLink: destination
+            }
+        }
+    } catch (error) {
+        console.log(error);
+        // return false;
+        return {
+            apiStatus: "ERROR",
+            data: {
+                error,
+                downloadLink: destination
+            }
+        }
+    }
+}
+
 module.exports = {
     generateInfo,
     getVideoMetadata,
     generateDownloadLinks,
     trimYTFormatVideo,
     downloadFile,
+    TrimvideodownloadFile,
     trimVideo,
+    trimmingVideo,
     getDownloadDirectory,
     removeDownloadDirectory,
 }

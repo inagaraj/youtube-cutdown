@@ -13,7 +13,9 @@ const {
     trimYTFormatVideo,
     getDownloadDirectory,
     downloadFile,
-    trimVideo
+    TrimvideodownloadFile,
+    trimVideo,
+    trimmingVideo
 } = require('../services/ytdl.service');
 const { response } = require('express');
 const { url } = require('inspector');
@@ -52,7 +54,6 @@ router.get('/info', getInfo);
 
 const download = async (req, res) => {
     // Body contents
-   
     let videoId = req.query.videoId;
     let itag = req.query.itag;
     let type = req.query.type;
@@ -65,7 +66,6 @@ const download = async (req, res) => {
     res.setHeader("Content-Disposition", `attachment; filename=${fileName}`);
 
     if (type === "normal") {
-        console.log(req.query.type);
         try {
             if (size) {
                 res.setHeader("Content-Length", size);
@@ -180,11 +180,15 @@ const downloadTrimmedVideo = async (req, res, next) => {
         filename = filename.split(')').join('');
         filename = filename.split('#').join('');
         // console.log("request body", req.body);
+      
         startTime = Number(startTime);
         endTime = Number(endTime);
 
-        let downloadResult = await trimYTFormatVideo(filename, format, startTime, endTime);
-
+        // let downloadResult = await trimYTFormatVideo(filename, format, startTime, endTime);
+        let fileNameToStoreDownloaded = 'downloaded' + '.' + format.container;
+        let downloadResult = await TrimvideodownloadFile(format.url,fileNameToStoreDownloaded);
+        console.log("RESULT");
+       
         if (downloadResult.apiStatus === "SUCCESS") {
             res.status(200).json({
                 apiStatus: "SUCCESS",
@@ -226,6 +230,70 @@ const downloadTrimmedVideo = async (req, res, next) => {
     }
 }
 router.post('/downloadTrimmedFile', downloadTrimmedVideo);
+
+const TrimmingVideo = async (req, res, next) => {
+    try {
+        // console.log(JSON.stringify(req.body));
+        let {directory, downloaded_link, format, startTime, endTime } = req.body;
+        // filename = filename.split(' ').join('_');
+        // filename = filename.split('|').join('I');
+        // filename = filename.split('(').join('');
+        // filename = filename.split(')').join('');
+        // filename = filename.split('#').join('');
+        // console.log("request body", req.body);
+        // console.log("downloadlink");
+        // console.log(downloaded_link);
+        startTime = Number(startTime);
+        endTime = Number(endTime);
+
+        // let downloadResult = await trimYTFormatVideo(filename, format, startTime, endTime);
+        let fileNameToStoreDownloaded = 'trimmed' + '.' + format.container;
+        let trimmedFilePath = path.join(directory + fileNameToStoreDownloaded);
+        let downloadResult = await trimmingVideo(downloaded_link,trimmedFilePath,startTime, endTime);
+        console.log("RESULT");
+        console.log(downloadResult);
+        if (downloadResult.apiStatus === "SUCCESS") {
+            res.status(200).json({
+                apiStatus: "SUCCESS",
+                data: downloadResult.data
+            });
+
+            // await res.sendFile(downloadResult.data.file
+            // await res.download(downloadResult.data.file, `trimmed.${format.extension}`, (err) => {
+            //     if(err) {
+            //         console.error("ERROR IN SENDING A TRIMMED FILE...", err);
+            //     }
+            // })
+        } else {
+            res.status(500).json({
+                apiStatus: "FAILURE",
+                data: downloadResult.data
+            });
+        }
+
+
+    } catch (error) {
+        console.error("ERROR IN downloadTrimmedVideo");
+        console.error(error)
+        if (error.code === "ERR_REQUEST_CANCELLED") {
+            res.status(500).json({
+                apiStatus: "FAILURE",
+                data: {
+                    message: "File size greater than Threshold limit"
+                }
+            });
+        } else {
+            res.status(statusCode).json({
+                apiStatus: "FAILURE",
+                data: {
+                    message: "Internal Server Error"
+                }
+            });
+        }
+    }
+}
+router.post('/downloadTrimmedFile2', TrimmingVideo);
+
 
 const downloadMergedTrimmedVideo = async (req, res, next) => {
     try {
