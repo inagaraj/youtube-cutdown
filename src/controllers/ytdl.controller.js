@@ -5,6 +5,7 @@ const ytdl = require('ytdl-core');
 const cp = require('child_process');
 const readline = require('readline');
 const ffmpeg = require('ffmpeg-static');
+const cors = require('cors');
 
 const {
     getVideoMetadata,
@@ -19,7 +20,15 @@ const {
 } = require('../services/ytdl.service');
 const { response } = require('express');
 const { url } = require('inspector');
-
+const corsOptions = {
+    origin: (origin, callback) => {
+      if (allowedOrigins.includes(origin) || !origin) {
+        callback(null, true);
+      } else {
+        callback(new Error('Origin not allowed by CORS'));
+      }
+    },
+  };
 
 const getInfo = async (req, res, next) => {
     try {
