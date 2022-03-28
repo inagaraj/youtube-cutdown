@@ -16,6 +16,7 @@ const corsOpts = {
     'http://localhost:8100',
     'https://cutdown.in/splitter/',
     'http://161.35.6.154/',
+    '*',
   ],
   
     methods: [
