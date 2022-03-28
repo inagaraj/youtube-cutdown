@@ -1,27 +1,34 @@
 const express = require('express');
 const cors = require('cors');
 const fileMiddleware = require('express-multipart-file-parser');
-
+const http = require('http');
 const app = express();
 app.use(express.json({limit: '200mb'}));
 
 
 
-app.use(cors());
-// app.use(cors({
-//     origin: "*",
-//     "methods": "GET,PUT,POST",
-//     "preflightContinue": false,
-//     "optionsSuccessStatus": 204,
-//     credentials: true
-// }));
-app.use(function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", '*');
-    res.header("Access-Control-Allow-Credentials", true);
-    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
-    res.header("Access-Control-Allow-Headers", 'Origin,X-Requested-With,Content-Type,Accept,content-type,application/json');
-    next();
-  });
+const corsOpts = {
+  origin: [
+    'capacitor://localhost',
+    'ionic://localhost',
+    'http://localhost',
+    'http://localhost:8080',
+    'http://localhost:8100',
+    'https://cutdown.in/splitter/',
+    'http://161.35.6.154/',
+  ],
+  
+    methods: [
+      'GET',
+      'POST',
+    ],
+  
+    allowedHeaders: [
+      'Content-Type',
+    ],
+  };
+  
+app.use(cors(corsOpts));
   
 app.use(fileMiddleware);
 
@@ -41,6 +48,19 @@ const ytdlControllers = require('./src/controllers/ytdl.controller');
 app.use(ytdlControllers)
 
 const port = process.env.PORT;
+
+const hostname = '0.0.0.0';
+
+
+// const server = http.createServer((req, res) => {
+//   res.statusCode = 200;
+//   res.setHeader('Content-Type', 'text/plain');
+//   res.end('NodeJS server running on Shared Hosting\n');
+// });
+
+// server.listen(port, hostname, () => {
+//   console.log('Server running at http://'+hostname+':'+port+'/');
+// });
 
 const server = app.listen(port, () => {
     console.log(`listening on port ${port}`);
