@@ -8,16 +8,17 @@ app.use(express.json({limit: '200mb'}));
 
 
 const corsOpts = {
-  origin: [
-    'capacitor://localhost',
-    'ionic://localhost',
-    'http://localhost',
-    'http://localhost:8080',
-    'http://localhost:8100',
-    'https://cutdown.in/splitter/',
-    'http://161.35.6.154/',
-    '*',
-  ],
+  // origin: [
+  //   'capacitor://localhost',
+  //   'ionic://localhost',
+  //   'http://localhost',
+  //   'http://localhost:8080',
+  //   'http://localhost:8100',
+  //   'https://cutdown.in/splitter/',
+  //   'http://161.35.6.154/',
+  //   '*',
+  // ],
+  origin: '*',
   
     methods: [
       'GET',
