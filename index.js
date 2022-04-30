@@ -1,11 +1,9 @@
-const express = require('express');
-const cors = require('cors');
-const fileMiddleware = require('express-multipart-file-parser');
-const http = require('http');
+const express = require("express");
+const cors = require("cors");
+const fileMiddleware = require("express-multipart-file-parser");
+const http = require("http");
 const app = express();
-app.use(express.json({limit: '200mb'}));
-
-
+app.use(express.json({ limit: "200mb" }));
 
 const corsOpts = {
   // origin: [
@@ -18,41 +16,34 @@ const corsOpts = {
   //   'http://161.35.6.154/',
   //   '*',
   // ],
-  origin: '*',
-  
-    methods: [
-      'GET',
-      'POST',
-    ],
-  
-    allowedHeaders: [
-      'Content-Type',
-    ],
-  };
-  
+  origin: "*",
+
+  methods: ["GET", "POST"],
+
+  allowedHeaders: ["Content-Type"],
+};
+
 app.use(cors(corsOpts));
-  
+
 app.use(fileMiddleware);
 
-require('dotenv').config({ path: __dirname + '/.env' });
-
+require("dotenv").config({ path: __dirname + "/.env" });
 
 // Logger
 if (process.env.ENV === "DEV") {
-    // console.log("Will Start Logging");
-    const logger = require('morgan');
-    app.use(logger('dev'));
+  // console.log("Will Start Logging");
+  const logger = require("morgan");
+  app.use(logger("dev"));
 }
 
-app.use(express.static('./downloads'));
+app.use(express.static("./downloads"));
 
-const ytdlControllers = require('./src/controllers/ytdl.controller');
-app.use(ytdlControllers)
+const ytdlControllers = require("./src/controllers/ytdl.controller");
+app.use(ytdlControllers);
 
-const port = process.env.PORT;
-
-const hostname = '0.0.0.0';
-
+//const port = process.env.PORT;
+const port = 5000;
+const hostname = "0.0.0.0";
 
 // const server = http.createServer((req, res) => {
 //   res.statusCode = 200;
@@ -65,7 +56,7 @@ const hostname = '0.0.0.0';
 // });
 
 const server = app.listen(port, () => {
-    console.log(`listening on port ${port}`);
-})
+  console.log(`listening on port ${port}`);
+});
 
 server.timeout = 600000;

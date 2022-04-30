@@ -216,6 +216,9 @@ const downloadFile = async (url, filename, destination) => {
     }
 }
 const TrimvideodownloadFile = async (url, filename) => {
+    
+
+    
     const downloadDirectory = await getDownloadDirectory();
     let isDownloadCancelled = false;
     const downloader = new Downloader({
@@ -256,6 +259,7 @@ const TrimvideodownloadFile = async (url, filename) => {
         }
         
     }
+
 }
 const trimVideo = async (videoPath, destination, startTime, endTime) => {
     try {
